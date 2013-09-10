@@ -62,9 +62,19 @@ class Manager
     public function consume($queue, $consumer, Context $context = null, $flags = null)
     {
         $queue = $this->getQueue($queue);
-        $queue->consume(function (\AMQPEnvelope $envelope, \AMQPQueue $queue) use ($consumer, $context) {
-            return $consumer($envelope, $queue, $context);
-        }, $flags);
+
+        while (true) {
+            $envelope = $queue->get($flags);
+            if (null === $envelope) {
+                usleep(100);
+                continue;
+            }
+
+            $return = $consumer($envelope, $queue, $context);
+            if (false === $return) {
+                break;
+            }
+        }
     }
 
     /**
