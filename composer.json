@@ -1,21 +1,24 @@
 {
     "name":        "blablacar/worker-lib",
     "description": "Worker lib for BlaBlaCar",
+    "keywords": ["amqp","worker"],
+    "type": "library",
+    "license": "Apache 2.0",
+    "authors": [
+        {
+            "name": "Olivier Dolbeau",
+            "homepage": "http://odolbeau.fr/"
+        }
+    ],
+    "require": {
+        "php":                ">=5.3.3",
+        "ext-amqp":           "*",
+        "monolog/monolog":    "dev-master",
+        "symfony/stopwatch":  "dev-master"
+    },
     "autoload":{
         "psr-0":{
             "Blablacar\\Worker": "src"
         }
-    },
-    "require": {
-        "php":                ">=5.3.3",
-        "monolog/monolog":    "dev-master",
-        "symfony/stopwatch":  "dev-master"
-    },
-    "repositories": [
-        {
-            "type": "composer",
-            "url": "http://packages.comuto3.com"
-        }
-    ],
-    "minimum-stability": "dev"
+    }
 }
