@@ -13,8 +13,8 @@
     "require": {
         "php":                ">=5.3.3",
         "ext-amqp":           "*",
-        "monolog/monolog":    "dev-master",
-        "symfony/stopwatch":  "dev-master"
+        "monolog/monolog":    ">=1.6",
+        "symfony/stopwatch":  ">=2.2"
     },
     "autoload":{
         "psr-0":{
