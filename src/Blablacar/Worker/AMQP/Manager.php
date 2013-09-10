@@ -63,17 +63,9 @@ class Manager
     {
         $queue = $this->getQueue($queue);
 
-        while (true) {
-            $envelope = $queue->get($flags);
-            if (false === $envelope) {
-                usleep(100);
-            } else {
-                $return = $consumer($envelope, $queue, $context);
-                if (false === $return) {
-                    break;
-                }
-            }
-        }
+        $queue->consume(function (\AMQPEnvelope $envelope, \AMQPQueue $queue) use ($consumer, $context) {
+            return $consumer($envelope, $queue, $context);
+        }, $flags);
     }
 
     /**

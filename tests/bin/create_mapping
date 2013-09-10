@@ -16,6 +16,7 @@ $exchange->declareExchange();
 echo "create queue\n";
 $queue = new \AMQPQueue($channel);
 $queue->setName('blablacar_worker_queue_test');
+$queue->setFlags(AMQP_DURABLE);
 $queue->declareQueue();
 
 echo "bind queue\n";
