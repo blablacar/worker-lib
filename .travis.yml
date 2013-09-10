@@ -10,13 +10,20 @@ matrix:
     - php: 5.5
 
 env:
-  global:
-    - RMQ_VER=3.1.5
+    - LIBRABBITMQ_VERSION=master
+    #- LIBRABBITMQ_VERSION=rabbitmq-c-v0.3.0
+
+services:
+    - rabbitmq
 
 before_script:
+  - sh -c "git clone git://github.com/alanxz/rabbitmq-c.git"
+  - sh -c "cd rabbitmq-c && git checkout ${LIBRABBITMQ_VERSION}"
+  - sh -c "cd rabbitmq-c && git submodule init && git submodule update"
+  - sh -c "cd rabbitmq-c && autoreconf -i && ./configure && make && sudo make install"
+  - sh -c "phpize && ./configure && make"
+  - ./tests/bin/create_mapping
   - composer self-update
   - composer install
-  - ./tests/bin/run_rabbitmq.sh
-  - ./tests/bin/create_mapping
 
 script: phpunit
