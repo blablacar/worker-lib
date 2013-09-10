@@ -27,3 +27,7 @@ before_script:
   - sh -c "./tests/bin/create_mapping"
 
 script: phpunit
+
+notifications:
+  email:
+    - olivier.dolbeau@blablacar.com
