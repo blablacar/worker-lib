@@ -65,14 +65,13 @@ class Manager
 
         while (true) {
             $envelope = $queue->get($flags);
-            if (null === $envelope) {
+            if (false === $envelope) {
                 usleep(100);
-                continue;
-            }
-
-            $return = $consumer($envelope, $queue, $context);
-            if (false === $return) {
-                break;
+            } else {
+                $return = $consumer($envelope, $queue, $context);
+                if (false === $return) {
+                    break;
+                }
             }
         }
     }
