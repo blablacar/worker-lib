@@ -3,19 +3,13 @@
     "description": "Worker lib for BlaBlaCar",
     "autoload":{
         "psr-0":{
-            "Blablacar": "src/",
-            "Blablacar\\Worker": "vendor/blablacar/worker-lib/"
+            "Blablacar\\Worker": "src"
         }
     },
-    "require":{
-        "php":                          ">=5.3.3",
-        "doctrine/dbal":                "dev-master",
-        "monolog/monolog":              "dev-master",
-        "symfony/yaml":                 "dev-master",
-        "symfony/dependency-injection": "dev-master",
-        "symfony/config":               "dev-master",
-        "blablacar/monolog":            "dev-master",
-        "symfony/stopwatch":            "dev-master"
+    "require": {
+        "php":                ">=5.3.3",
+        "monolog/monolog":    "dev-master",
+        "symfony/stopwatch":  "dev-master"
     },
     "repositories": [
         {
