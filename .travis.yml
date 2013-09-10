@@ -15,6 +15,7 @@ env:
 
 before_script:
   - composer self-update
+  - composer install
   - ./tests/bin/run_rabbitmq.sh
   - ./tests/bin/create_mapping
 
