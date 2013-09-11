@@ -41,13 +41,16 @@ class Manager
      * @param string $exchange
      * @param string $message
      * @param string $routingKey
+     * @param int    $flags
+     * @param array  $attributes
      *
-     * @return void
+     * @return boolean
      */
-    public function publish($exchange, $message, $routingKey)
+    public function publish($exchange, $message, $routingKey, $flags = AMQP_NOPARAM, array $attributes = array())
     {
         $exchange = $this->getExchange($exchange);
-        $exchange->publish($message, $routingKey);
+
+        return $exchange->publish($message, $routingKey, $flags, $attributes);
     }
 
     /**
