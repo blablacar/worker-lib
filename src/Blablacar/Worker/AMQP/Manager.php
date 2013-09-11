@@ -10,7 +10,8 @@ class Manager
 {
     protected $connection;
 
-    protected $queues = array();
+    protected $exchanges = array();
+    protected $queues    = array();
     protected $channel;
 
     public function __construct(\AMQPConnection $connection)
