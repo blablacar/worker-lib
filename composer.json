@@ -11,10 +11,11 @@
         }
     ],
     "require": {
-        "php":                ">=5.3.3",
-        "ext-amqp":           "*",
-        "monolog/monolog":    ">=1.6",
-        "symfony/stopwatch":  ">=2.2"
+        "php":               ">=5.3.3",
+        "ext-amqp":          "*",
+        "monolog/monolog":   ">=1.6",
+        "symfony/stopwatch": ">=2.2",
+        "symfony/console":   ">=2.2"
     },
     "autoload":{
         "psr-0":{

@@ -2,6 +2,8 @@
 
 namespace Blablacar\Worker\AMQP\Consumer;
 
+use Symfony\Component\Console\Output\OutputInterface;
+
 class Context
 {
     protected $maxExecutionTime;
@@ -9,12 +11,23 @@ class Context
     protected $useSigHandler  = false;
     protected $requeueOnError = false;
 
+    protected $output;
+
     public function __construct($maxExecutionTime = null, $maxMessages = null, $useSigHandler = false, $requeueOnError = false)
     {
         $this->maxExecutionTime = $maxExecutionTime;
         $this->maxMessages      = $maxMessages;
         $this->useSigHandler    = $useSigHandler;
         $this->requeueOnError   = $requeueOnError;
+    }
+
+    public function output($output)
+    {
+        if (null === $this->output) {
+            return;
+        }
+
+        $this->output->writeln($output);
     }
 
     public function getMaxExecutionTime()
@@ -55,5 +68,15 @@ class Context
     public function setRequeueOnError($requeueOnError)
     {
         $this->requeueOnError = $requeueOnError;
+    }
+
+    public function getOutput()
+    {
+        return $this->output;
+    }
+
+    public function setOutput(OutputInterface $output)
+    {
+        $this->output = $output;
     }
 }

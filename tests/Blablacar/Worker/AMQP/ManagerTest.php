@@ -5,6 +5,7 @@ namespace Blablacar\Worker\AMQP;
 use Blablacar\Worker\AMQP\Manager;
 use Blablacar\Worker\AMQP\Consumer\Context;
 use Blablacar\Worker\AMQP\Consumer\Wrapper;
+use Symfony\Component\Stopwatch\Stopwatch;
 
 class ManagerTest extends \PHPUnit_Framework_TestCase
 {
@@ -55,6 +56,6 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
             ->will($this->onConsecutiveCalls(true, true, false))
         ;
 
-        $manager->consume('blablacar_worker_queue_test', new Wrapper($consumer));
+        $manager->consume('blablacar_worker_queue_test', new Wrapper($consumer, new Stopwatch()));
     }
 }
