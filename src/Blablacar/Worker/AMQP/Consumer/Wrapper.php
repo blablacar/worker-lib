@@ -58,6 +58,10 @@ class Wrapper implements ConsumerInterface
                 '<error>NACK [%s].</error>',
                 $envelope->getDeliveryTag()
             ));
+
+            if ($context->getOutput()->getVerbosity() >= 2) {
+                throw $e;
+            }
             $returnCode = false;
         }
 
