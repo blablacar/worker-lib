@@ -47,13 +47,17 @@ class Wrapper implements ConsumerInterface
             $queue->ack($envelope->getDeliveryTag());
 
             $context->output(sprintf(
-                '<comment>ACK [%s]. Duration <info>%fs</info>. Memory usage: <info>%f Mo</info></comment>',
+                '<comment>ACK [%s]. Duration <info>%.4fs</info>. Memory usage: <info>%.2f Mo</info></comment>',
                 $envelope->getDeliveryTag(),
                 time()-$this->startTime,
                 round(memory_get_usage()/1024/1024, 2)
             ));
         } catch (\Exception $e) {
             $queue->nack($envelope->getDeliveryTag(), $context->getRequeueOnError()? AMQP_REQUEUE : null);
+            $context->output(sprintf(
+                '<error>NACK [%s].</error>',
+                $envelope->getDeliveryTag()
+            ));
             $returnCode = false;
         }
 
