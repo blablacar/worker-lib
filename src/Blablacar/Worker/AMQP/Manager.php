@@ -120,12 +120,7 @@ class Manager
         }
 
         try {
-            if (null === $this->channel) {
-                $this->connect();
-            }
-
-            $queue = new \AMQPQueue($this->channel);
-            $queue->setName($name);
+            $queue = $this->getQueue($name);
 
             return $queue->delete(AMQP_IFEMPTY|AMQP_IFUNUSED);
         } catch (\AMQPException $e) {
