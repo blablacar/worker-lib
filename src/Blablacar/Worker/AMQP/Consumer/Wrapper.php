@@ -1,4 +1,5 @@
 <?php
+declare(ticks = 1);
 
 namespace Blablacar\Worker\AMQP\Consumer;
 
@@ -11,6 +12,7 @@ class Wrapper implements ConsumerInterface
 {
     protected $consumer;
 
+    protected $firstRun = true;
     protected $startTime;
 
     public function __construct(ConsumerInterface $consumer)
@@ -23,9 +25,17 @@ class Wrapper implements ConsumerInterface
      */
     public function __invoke(\AMQPEnvelope $envelope, \AMQPQueue $queue, Context $context = null)
     {
-        if (null === $startTime) {
-            $startTime = time();
+        if ($this->firstRun) {
+            $this->firstRun = false;
+            $this->startTime = time();
+            $context->output(sprintf(
+                '<comment>Run worker (pid: <info>%d</info>. Consume <info>%d messages</info> or stop after <info>%ds</info>.</comment>',
+                getmypid(),
+                $context->getMaxMessages(),
+                $context->getMaxExecutionTime()
+            ));
         }
+
         if (null === $context) {
             $context = new Context();
         }
