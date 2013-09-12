@@ -107,6 +107,28 @@ class Manager
     }
 
     /**
+     * deleteQueue
+     *
+     * @param strin $name
+     *
+     * @return boolean
+     */
+    public function deleteQueue($name)
+    {
+        if (strlen($name) == 0) {
+            return false;
+        }
+
+        try {
+            $queue = $this->getQueue($name);
+
+            return $queue->delete(AMQP_IFEMPTY|AMQP_IFUNUSED);
+        } catch (\AMQPException $e) {
+            return false;
+        }
+    }
+
+    /**
      * getExchange
      *
      * @param string $name
