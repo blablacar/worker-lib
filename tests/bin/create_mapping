@@ -26,3 +26,9 @@ echo "Publish messages\n";
 for ($i = 0; $i < 10; $i++) {
     $exchange->publish("message$i", 'test');
 }
+
+echo "create queue\n";
+$queue = new \AMQPQueue($channel);
+$queue->setName('blablacar_delete_test');
+$queue->setFlags(AMQP_DURABLE);
+$queue->declareQueue();

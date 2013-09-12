@@ -58,4 +58,12 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
 
         $manager->consume('blablacar_worker_queue_test', new Wrapper($consumer, new Stopwatch()));
     }
+
+    public function testDeleteQueue()
+    {
+        $manager = new Manager(new \AMQPConnection());
+        $isDeleted = $manager->deleteQueue('blablacar_delete_test');
+
+        $this->assertTrue($isDeleted);
+    }
 }

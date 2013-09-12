@@ -107,6 +107,33 @@ class Manager
     }
 
     /**
+     * deleteQueue
+     *
+     * @param strin $name
+     *
+     * @return boolean
+     */
+    public function deleteQueue($name)
+    {
+        if (strlen($name) == 0) {
+            return false;
+        }
+
+        try {
+            if (null === $this->channel) {
+                $this->connect();
+            }
+
+            $queue = new \AMQPQueue($this->channel);
+            $queue->setName($name);
+
+            return $queue->delete(AMQP_IFEMPTY|AMQP_IFUNUSED);
+        } catch (\AMQPException $e) {
+            return false;
+        }
+    }
+
+    /**
      * getExchange
      *
      * @param string $name
