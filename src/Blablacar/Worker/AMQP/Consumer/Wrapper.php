@@ -2,24 +2,20 @@
 
 namespace Blablacar\Worker\AMQP\Consumer;
 
-use Symfony\Component\Stopwatch\Stopwatch;
-
 /**
  * Wrapper
  *
- * @TODO: Stopwatch must not be passed in the constructor (and must be null by
- * default)
  * @TODO: Refactor the __invoke method !
  */
 class Wrapper implements ConsumerInterface
 {
     protected $consumer;
-    protected $stopwatch;
 
-    public function __construct(ConsumerInterface $consumer, Stopwatch $stopwatch)
+    protected $startTime;
+
+    public function __construct(ConsumerInterface $consumer)
     {
-        $this->consumer  = $consumer;
-        $this->stopwatch = $stopwatch;
+        $this->consumer = $consumer;
     }
 
     /**
@@ -27,11 +23,9 @@ class Wrapper implements ConsumerInterface
      */
     public function __invoke(\AMQPEnvelope $envelope, \AMQPQueue $queue, Context $context = null)
     {
-        $stopwatchKey = spl_object_hash($envelope);
-        if (!$this->stopwatch->isStarted($stopwatchKey)) {
-            $this->stopwatch->start($stopwatchKey);
+        if (null === $startTime) {
+            $startTime = time();
         }
-
         if (null === $context) {
             $context = new Context();
         }
@@ -42,15 +36,11 @@ class Wrapper implements ConsumerInterface
 
             $queue->ack($envelope->getDeliveryTag());
 
-            $event = $this->stopwatch->lap($stopwatchKey);
-            $periods = $event->getPeriods();
-            $usage = round(end($periods)->getMemory()/1024/1024, 2);
-
             $context->output(sprintf(
-                '<comment>ACK [%s]. Duration <info>%ss</info>. Memory usage: <info>%s</info></comment>',
+                '<comment>ACK [%s]. Duration <info>%fs</info>. Memory usage: <info>%f Mo</info></comment>',
                 $envelope->getDeliveryTag(),
-                end($periods)->getDuration(),
-                $usage
+                time()-$this->startTime,
+                round(memory_get_usage()/1024/1024, 2)
             ));
         } catch (\Exception $e) {
             $queue->nack($envelope->getDeliveryTag(), $context->getRequeueOnError()? AMQP_REQUEUE : null);
