@@ -82,7 +82,7 @@ class Wrapper implements ConsumerInterface
 
 
         $elapsedTime = time()-$this->startTime;
-        if (++$nbMessagesProcessed >= $context->getMaxMessages()) {
+        if (++$this->nbMessagesProcessed >= $context->getMaxMessages()) {
             $context->output(sprintf(
                 '<info>Exiting after processing <comment>%d messages</comment> in <comment>%.2fs</comment>.</info>',
                 $this->nbMessagesProcessed,
