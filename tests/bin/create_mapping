@@ -23,7 +23,7 @@ echo "bind queue\n";
 $queue->bind('blablacar_worker_exchange_test', 'test');
 
 echo "Publish messages\n";
-for ($i = 0; $i < 10; $i++) {
+for ($i = 0; $i < 1000; $i++) {
     $exchange->publish("message$i", 'test');
 }
 

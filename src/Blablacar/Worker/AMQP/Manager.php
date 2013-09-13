@@ -67,9 +67,17 @@ class Manager
     {
         $queue = $this->getQueue($queue);
 
+        if ($consumer instanceof ConsumerInterface) {
+            $consumer->preProcess($context);
+        }
+
         $queue->consume(function (\AMQPEnvelope $envelope, \AMQPQueue $queue) use ($consumer, $context) {
             return $consumer($envelope, $queue, $context);
         }, $flags);
+
+        if ($consumer instanceof ConsumerInterface) {
+            $consumer->postProcess($context);
+        }
     }
 
     /**
