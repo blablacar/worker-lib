@@ -89,7 +89,7 @@ class Wrapper implements ConsumerInterface
         $elapsedTime = microtime(true)-$this->startTime;
         if (++$this->nbMessagesProcessed >= $context->getMaxMessages()) {
             $context->output(sprintf(
-                '<info>Exiting after processing <comment>%d messages</comment> in <comment>%.2fs</comment>.</info>',
+                '<info>Max messages reached. Exiting after processing <comment>%d messages</comment> in <comment>%.2fs</comment>.</info>',
                 $this->nbMessagesProcessed,
                 $elapsedTime
             ));
@@ -99,7 +99,7 @@ class Wrapper implements ConsumerInterface
 
         if ($elapsedTime >= $context->getMaxExecutionTime()) {
             $context->output(sprintf(
-                '<info>Exiting after processing <comment>%d messages</comment> in <comment>%.2fs</comment>.</info>',
+                '<info>Maximum time exceeded. Exiting after processing <comment>%d messages</comment> in <comment>%.2fs</comment>.</info>',
                 $this->nbMessagesProcessed,
                 $elapsedTime
             ));
@@ -108,6 +108,12 @@ class Wrapper implements ConsumerInterface
         }
 
         if ($context->getUseSigHandler()) {
+            $context->output(sprintf(
+                '<info>Signal received. Exiting after processing <comment>%d messages</comment> in <comment>%.2fs</comment>.</info>',
+                $this->nbMessagesProcessed,
+                $elapsedTime
+            ));
+
             return SignalHandler::haveToStop();
         }
 
