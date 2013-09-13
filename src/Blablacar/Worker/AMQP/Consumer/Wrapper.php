@@ -15,7 +15,7 @@ class Wrapper implements ConsumerInterface
     protected $startTime;
     protected $nbMessagesProcessed = 0;
 
-    public function __construct(ConsumerInterface $consumer)
+    public function __construct($consumer)
     {
         $this->consumer = $consumer;
     }
