@@ -57,7 +57,7 @@ class Wrapper implements ConsumerInterface
 
         try {
             $consumer = $this->consumer;
-            $returnCode = $consumer($envelope, $queue, $context);
+            $consumer($envelope, $queue, $context);
 
             $queue->ack($envelope->getDeliveryTag());
 
@@ -74,10 +74,9 @@ class Wrapper implements ConsumerInterface
                 $envelope->getDeliveryTag()
             ));
 
-            if ($context->getOutput()->getVerbosity() >= 2) {
+            if (null !== $context->getOutput() && $context->getOutput()->getVerbosity() >= 2) {
                 throw $e;
             }
-            $returnCode = false;
         }
 
 
@@ -102,6 +101,6 @@ class Wrapper implements ConsumerInterface
             return false;
         }
 
-        return $returnCode;
+        return true;
     }
 }

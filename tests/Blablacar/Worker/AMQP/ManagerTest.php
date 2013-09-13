@@ -52,10 +52,10 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
                 $this->anything(),
                 $this->anything()
             )
-            ->will($this->onConsecutiveCalls(true, true, false))
+            ->will($this->returnValue(true))
         ;
 
-        $manager->consume('blablacar_worker_queue_test', new Wrapper($consumer));
+        $manager->consume('blablacar_worker_queue_test', new Wrapper($consumer), new Context(300, 3));
     }
 
     public function testDeleteQueue()

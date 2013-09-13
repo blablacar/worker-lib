@@ -6,14 +6,14 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class Context
 {
-    protected $maxExecutionTime;
-    protected $maxMessages;
-    protected $useSigHandler  = false;
-    protected $requeueOnError = false;
+    protected $maxExecutionTime = 300;
+    protected $maxMessages      = 300;
+    protected $useSigHandler    = false;
+    protected $requeueOnError   = false;
 
     protected $output;
 
-    public function __construct($maxExecutionTime = null, $maxMessages = null, $useSigHandler = false, $requeueOnError = false)
+    public function __construct($maxExecutionTime = 300, $maxMessages = 300, $useSigHandler = false, $requeueOnError = false)
     {
         $this->maxExecutionTime = $maxExecutionTime;
         $this->maxMessages      = $maxMessages;
