@@ -20,10 +20,10 @@ class SignalHandler
         }
     }
 
-    public static function stop()
+    public static function haveToStop()
     {
         if (!extension_loaded('pcntl')) {
-            return;
+            return false;
         }
 
         pcntl_signal_dispatch();
@@ -32,8 +32,6 @@ class SignalHandler
             pcntl_signal($signal, SIG_DFL);
         }
 
-        if (self::$shouldExitForSignal) {
-            exit(0);
-        }
+        return self::$shouldExitForSignal;
     }
 }

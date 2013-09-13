@@ -3,6 +3,8 @@ declare(ticks = 1);
 
 namespace Blablacar\Worker\AMQP\Consumer;
 
+use Blablacar\Worker\Util\SignalHandler;
+
 /**
  * Wrapper
  *
@@ -55,6 +57,10 @@ class Wrapper implements ConsumerInterface
             $context = new Context();
         }
 
+        if ($context->getUseSigHandler()) {
+            SignalHandler::start();
+        }
+
         try {
             $consumer = $this->consumer;
             $consumer($envelope, $queue, $context);
@@ -99,6 +105,10 @@ class Wrapper implements ConsumerInterface
             ));
 
             return false;
+        }
+
+        if ($context->getUseSigHandler()) {
+            return SignalHandler::haveToStop();
         }
 
         return true;
