@@ -107,14 +107,14 @@ class Wrapper implements ConsumerInterface
             return false;
         }
 
-        if ($context->getUseSigHandler()) {
+        if ($context->getUseSigHandler() && SignalHandler::haveToStop()) {
             $context->output(sprintf(
                 '<info>Signal received. Exiting after processing <comment>%d messages</comment> in <comment>%.2fs</comment>.</info>',
                 $this->nbMessagesProcessed,
                 $elapsedTime
             ));
 
-            return SignalHandler::haveToStop();
+            return false;
         }
 
         return true;
