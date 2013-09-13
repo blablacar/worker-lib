@@ -13,6 +13,7 @@ class Wrapper implements ConsumerInterface
     protected $consumer;
 
     protected $startTime;
+    protected $nbMessagesProcessed = 0;
 
     public function __construct(ConsumerInterface $consumer)
     {
@@ -49,6 +50,7 @@ class Wrapper implements ConsumerInterface
      */
     public function __invoke(\AMQPEnvelope $envelope, \AMQPQueue $queue, Context $context = null)
     {
+        $currentStartTime = time();
         if (null === $context) {
             $context = new Context();
         }
@@ -60,9 +62,9 @@ class Wrapper implements ConsumerInterface
             $queue->ack($envelope->getDeliveryTag());
 
             $context->output(sprintf(
-                '<comment>ACK [%s]. Duration <info>%.4fs</info>. Memory usage: <info>%.2f Mo</info></comment>',
+                '<comment>ACK [%s]. Duration <info>%.2fs</info>. Memory usage: <info>%.2f Mo</info></comment>',
                 $envelope->getDeliveryTag(),
-                time()-$this->startTime,
+                time()-$currentStartTime,
                 round(memory_get_usage()/1024/1024, 2)
             ));
         } catch (\Exception $e) {
@@ -76,6 +78,28 @@ class Wrapper implements ConsumerInterface
                 throw $e;
             }
             $returnCode = false;
+        }
+
+
+        $elapsedTime = time()-$this->startTime;
+        if (++$nbMessagesProcessed >= $context->getMaxMessages()) {
+            $context->output(sprintf(
+                '<info>Exiting after processing <comment>%d messages</comment> in <comment>%.2fs</comment>.</info>',
+                $this->nbMessagesProcessed,
+                $elapsedTime
+            ));
+
+            return false;
+        }
+
+        if ($elapsedTime >= $context->getMaxExecutionTime()) {
+            $context->output(sprintf(
+                '<info>Exiting after processing <comment>%d messages</comment> in <comment>%.2fs</comment>.</info>',
+                $this->nbMessagesProcessed,
+                $elapsedTime
+            ));
+
+            return false;
         }
 
         return $returnCode;
