@@ -31,7 +31,7 @@ class Wrapper implements ConsumerInterface
         }
 
         $context->output(sprintf(
-            '<comment>Run worker (pid: <info>%d</info>. Consume <info>%d messages</info> or stop after <info>%ds</info>.</comment>',
+            '<info>Run worker (pid: <comment>%d</comment>. Consume <comment>%d messages</comment> or stop after <comment>%ds</comment>.</info>',
             getmypid(),
             $context->getMaxMessages(),
             $context->getMaxExecutionTime()
