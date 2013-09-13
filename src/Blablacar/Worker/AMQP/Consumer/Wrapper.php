@@ -50,7 +50,7 @@ class Wrapper implements ConsumerInterface
      */
     public function __invoke(\AMQPEnvelope $envelope, \AMQPQueue $queue, Context $context = null)
     {
-        $currentStartTime = time();
+        $currentStartTime = microtime(true);
         if (null === $context) {
             $context = new Context();
         }
@@ -64,7 +64,7 @@ class Wrapper implements ConsumerInterface
             $context->output(sprintf(
                 '<comment>ACK [%s]. Duration <info>%.2fs</info>. Memory usage: <info>%.2f Mo</info></comment>',
                 $envelope->getDeliveryTag(),
-                time()-$currentStartTime,
+                microtime(true)-$currentStartTime,
                 round(memory_get_usage()/1024/1024, 2)
             ));
         } catch (\Exception $e) {
@@ -80,7 +80,7 @@ class Wrapper implements ConsumerInterface
         }
 
 
-        $elapsedTime = time()-$this->startTime;
+        $elapsedTime = microtime(true)-$this->startTime;
         if (++$this->nbMessagesProcessed >= $context->getMaxMessages()) {
             $context->output(sprintf(
                 '<info>Exiting after processing <comment>%d messages</comment> in <comment>%.2fs</comment>.</info>',
