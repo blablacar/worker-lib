@@ -4,6 +4,7 @@ declare(ticks = 1);
 namespace Blablacar\Worker\AMQP\Consumer;
 
 use Blablacar\Worker\Util\SignalHandler;
+use Psr\Log\LoggerInterface;
 
 /**
  * Wrapper
@@ -13,13 +14,15 @@ use Blablacar\Worker\Util\SignalHandler;
 class Wrapper implements ConsumerInterface
 {
     protected $consumer;
+    protected $logger;
 
     protected $startTime;
     protected $nbMessagesProcessed = 0;
 
-    public function __construct($consumer)
+    public function __construct($consumer, LoggerInterface $logger = null)
     {
         $this->consumer = $consumer;
+        $this->logger   = $logger;
     }
 
     /**
@@ -79,6 +82,14 @@ class Wrapper implements ConsumerInterface
                 '<error>NACK [%s].</error>',
                 $envelope->getDeliveryTag()
             ));
+
+            if (null !== $this->logger) {
+                $this->logger->error(sprintf(
+                    'Error occured with queue "%s". Exception: %s',
+                    $queue->getName(),
+                    $e->getTraceAsString()
+                ));
+            }
 
             if (null !== $context->getOutput() && $context->getOutput()->getVerbosity() >= 2) {
                 throw $e;
