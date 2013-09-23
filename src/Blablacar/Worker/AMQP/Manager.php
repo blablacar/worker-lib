@@ -27,10 +27,11 @@ class Manager
     public function getConfig()
     {
         return sprintf(
-            '%s[:%s]@%s:%d',
+            '%s[:%s]@%s%s:%d',
             $this->connection->getLogin(),
             $this->connection->getPassword(),
             $this->connection->getHost(),
+            $this->connection->getVhost(),
             $this->connection->getPort()
         );
     }
