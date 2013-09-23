@@ -17,7 +17,7 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
     public function testGetConfig()
     {
         $manager = new Manager(new \AMQPConnection());
-        $this->assertEquals('guest[:guest]@localhost:5672', $manager->getConfig());
+        $this->assertEquals('guest[:guest]@localhost/:5672', $manager->getConfig());
     }
 
     public function testConsumeWithConsumerInterface()
@@ -64,5 +64,13 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
         $isDeleted = $manager->deleteQueue('blablacar_delete_test');
 
         $this->assertTrue($isDeleted);
+    }
+
+    public function testPublish()
+    {
+        $manager = new Manager(new \AMQPConnection());
+        $isPublished = $manager->publish('blablacar_worker_exchange_test', 'my message', 'test');
+
+        $this->assertTrue($isPublished);
     }
 }
