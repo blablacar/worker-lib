@@ -105,7 +105,7 @@ class Manager
      *
      * @return void
      */
-    public function createQueue($name, $flags, array $arguments = array())
+    public function createQueue($name, $flags = AMQP_NOPARAM, array $arguments = array())
     {
         $queue = $this->getQueue($name);
         $queue->setFlags($flags);
