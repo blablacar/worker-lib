@@ -85,8 +85,9 @@ class Wrapper implements ConsumerInterface
 
             if (null !== $this->logger) {
                 $this->logger->error(sprintf(
-                    'Error occured with queue "%s". Exception: %s',
+                    'Error occured with queue "%s". Message: %s. Exception: %s',
                     $queue->getName(),
+                    $e->getMessage(),
                     $e->getTraceAsString()
                 ));
             }
