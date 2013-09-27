@@ -85,7 +85,8 @@ class Manager
                 $continue = $consumer($envelope, $queue, $context);
             }
 
-            if (microtime(true)-$this->startTime >= $context->getMaxExecutionTime()) {
+            $elapsedTime = microtime(true)-$this->startTime;
+            if ($elapsedTime >= $context->getMaxExecutionTime()) {
                 $context->output(sprintf(
                     '<info>Maximum time exceeded. Exiting after <comment>%.2fs</comment>.</info>',
                     $elapsedTime
