@@ -16,7 +16,6 @@ class Wrapper implements ConsumerInterface
     protected $consumer;
     protected $logger;
 
-    protected $startTime;
     protected $nbMessagesProcessed = 0;
 
     public function __construct($consumer, LoggerInterface $logger = null)
@@ -30,7 +29,6 @@ class Wrapper implements ConsumerInterface
      */
     public function preProcess(Context $context = null)
     {
-        $this->startTime = time();
         if (null === $context) {
             return;
         }
@@ -97,23 +95,10 @@ class Wrapper implements ConsumerInterface
             }
         }
 
-
-        $elapsedTime = microtime(true)-$this->startTime;
         if (++$this->nbMessagesProcessed >= $context->getMaxMessages()) {
             $context->output(sprintf(
-                '<info>Max messages reached. Exiting after processing <comment>%d messages</comment> in <comment>%.2fs</comment>.</info>',
-                $this->nbMessagesProcessed,
-                $elapsedTime
-            ));
-
-            return false;
-        }
-
-        if ($elapsedTime >= $context->getMaxExecutionTime()) {
-            $context->output(sprintf(
-                '<info>Maximum time exceeded. Exiting after processing <comment>%d messages</comment> in <comment>%.2fs</comment>.</info>',
-                $this->nbMessagesProcessed,
-                $elapsedTime
+                '<info>Max messages reached. Exiting after processing <comment>%d messages</comment>.</info>',
+                $this->nbMessagesProcessed
             ));
 
             return false;
@@ -121,9 +106,8 @@ class Wrapper implements ConsumerInterface
 
         if ($context->getUseSigHandler() && SignalHandler::haveToStop()) {
             $context->output(sprintf(
-                '<info>Signal received. Exiting after processing <comment>%d messages</comment> in <comment>%.2fs</comment>.</info>',
-                $this->nbMessagesProcessed,
-                $elapsedTime
+                '<info>Signal received. Exiting after processing <comment>%d messages</comment>.</info>',
+                $this->nbMessagesProcessed
             ));
 
             return false;

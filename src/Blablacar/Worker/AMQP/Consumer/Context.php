@@ -10,15 +10,23 @@ class Context
     protected $maxMessages      = 300;
     protected $useSigHandler    = false;
     protected $requeueOnError   = false;
+    protected $pollInterval     = 500; // ms
 
     protected $output;
 
-    public function __construct($maxExecutionTime = 300, $maxMessages = 300, $useSigHandler = false, $requeueOnError = false)
+    public function __construct(
+        $maxExecutionTime = 300,
+        $maxMessages      = 300,
+        $useSigHandler    = false,
+        $requeueOnError   = false,
+        $pollInterval     = 500
+    )
     {
         $this->maxExecutionTime = $maxExecutionTime;
         $this->maxMessages      = $maxMessages;
         $this->useSigHandler    = $useSigHandler;
         $this->requeueOnError   = $requeueOnError;
+        $this->pollInterval     = $pollInterval;
     }
 
     public function output($output)
@@ -78,5 +86,15 @@ class Context
     public function setOutput(OutputInterface $output)
     {
         $this->output = $output;
+    }
+
+    public function getPollInterval()
+    {
+        return $this->pollInterval;
+    }
+
+    public function setPollInterval($pollInterval)
+    {
+        $this->pollInterval = $pollInterval;
     }
 }

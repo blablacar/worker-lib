@@ -13,6 +13,7 @@ class Manager
     protected $exchanges = array();
     protected $queues    = array();
     protected $channel;
+    protected $startTime;
 
     public function __construct(\AMQPConnection $connection)
     {
@@ -72,9 +73,27 @@ class Manager
             $consumer->preProcess($context);
         }
 
-        $queue->consume(function (\AMQPEnvelope $envelope, \AMQPQueue $queue) use ($consumer, $context) {
-            return $consumer($envelope, $queue, $context);
-        }, $flags);
+        $this->startTime = time();
+
+        $continue = true;
+        while ($continue) {
+            $envelope = $queue->get($flags);
+
+            if (!$envelope) {
+                usleep($context->getPollInterval());
+            } else {
+                $continue = $consumer($envelope, $queue, $context);
+            }
+
+            if (microtime(true)-$this->startTime >= $context->getMaxExecutionTime()) {
+                $context->output(sprintf(
+                    '<info>Maximum time exceeded. Exiting after <comment>%.2fs</comment>.</info>',
+                    $elapsedTime
+                ));
+
+                return false;
+            }
+        }
 
         if ($consumer instanceof ConsumerInterface) {
             $consumer->postProcess($context);
