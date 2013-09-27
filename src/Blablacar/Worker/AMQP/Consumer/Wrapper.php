@@ -54,9 +54,6 @@ class Wrapper implements ConsumerInterface
     public function __invoke(\AMQPEnvelope $envelope, \AMQPQueue $queue, Context $context = null)
     {
         $currentStartTime = microtime(true);
-        if (null === $context) {
-            $context = new Context();
-        }
 
         if ($context->getUseSigHandler()) {
             SignalHandler::start();

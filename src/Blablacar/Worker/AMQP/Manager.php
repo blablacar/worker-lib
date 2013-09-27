@@ -67,6 +67,10 @@ class Manager
      */
     public function consume($queue, $consumer, Context $context = null, $flags = null)
     {
+        if (null === $context) {
+            $context = new Context();
+        }
+
         $queue = $this->getQueue($queue);
 
         if ($consumer instanceof ConsumerInterface) {
