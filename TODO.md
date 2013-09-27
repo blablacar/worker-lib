@@ -2,6 +2,8 @@ TODO:
 
 - Handle PHP Catchable Fatal errors
 - Add profiling
+- Refactor SignalHandler
+- Clean Manager::consume & Wrapper
 
 DONE:
 
