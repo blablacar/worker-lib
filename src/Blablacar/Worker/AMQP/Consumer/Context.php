@@ -10,7 +10,7 @@ class Context
     protected $maxMessages      = 300;
     protected $useSigHandler    = false;
     protected $requeueOnError   = false;
-    protected $pollInterval     = 500; // ms
+    protected $pollInterval     = 500000; // microseconds
 
     protected $output;
 
@@ -19,7 +19,7 @@ class Context
         $maxMessages      = 300,
         $useSigHandler    = false,
         $requeueOnError   = false,
-        $pollInterval     = 500
+        $pollInterval     = 500000
     )
     {
         $this->maxExecutionTime = $maxExecutionTime;
