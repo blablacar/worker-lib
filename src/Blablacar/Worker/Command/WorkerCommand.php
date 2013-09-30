@@ -41,7 +41,7 @@ abstract class WorkerCommand extends Command
             ->addOption('max-messages', null, InputOption::VALUE_REQUIRED, 'Max messages to process before exit', 300)
             ->addOption('no-sighandler', null, InputOption::VALUE_NONE, 'Disable signal handlers')
             ->addOption('requeue-on-error', null, InputOption::VALUE_NONE, 'Requeue in the same queue on error')
-            ->addOption('poll-interval', null, InputOption::VALUE_REQUIRED, 'Poll interval (in micro-seconds)', 500)
+            ->addOption('poll-interval', null, InputOption::VALUE_REQUIRED, 'Poll interval (in micro-seconds)', 500000)
         ;
     }
 
