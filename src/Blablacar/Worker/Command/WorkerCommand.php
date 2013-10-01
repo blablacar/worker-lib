@@ -25,7 +25,7 @@ abstract class WorkerCommand extends Command
      *
      * @return ConsumerInterface
      */
-    abstract protected function getConsumer();
+    abstract protected function getConsumer(InputInterface $input, OutputInterface $output);
 
     /**
      * {@inheritDoc}
@@ -66,7 +66,7 @@ abstract class WorkerCommand extends Command
         }
 
         // Consumer
-        $consumer = $this->getConsumer();
+        $consumer = $this->getConsumer($input, $output);
 
         // Context
         $context = new Context(
