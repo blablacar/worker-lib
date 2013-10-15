@@ -56,6 +56,12 @@ abstract class WorkerCommand extends Command
         // Manager
         try {
             $manager = $this->getManager($connection);
+            if (OutputInterface::VERBOSITY_DEBUG === $output->getVerbosity()) {
+                $output->writeln(sprintf(
+                    'Use connection: "%s"',
+                    $manager->getConfig()
+                ));
+            }
         } catch (\Exception $e) {
             $output->writeln(sprintf(
                 '<error>No manager "%s".</error>',
