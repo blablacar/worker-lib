@@ -29,9 +29,36 @@ class Context
         $this->pollInterval     = $pollInterval;
     }
 
+    /**
+     * output
+     *
+     * @param string $output
+     *
+     * @return void
+     */
     public function output($output)
     {
         if (null === $this->output) {
+            return;
+        }
+
+        $this->output->writeln($output);
+    }
+
+    /**
+     * debug
+     *
+     * @param string $output
+     *
+     * @return void
+     */
+    public function debug($output)
+    {
+        if (null === $this->output) {
+            return;
+        }
+
+        if ($this->output->getVerbosity() < OutputInterface::VERBOSITY_DEBUG) {
             return;
         }
 
