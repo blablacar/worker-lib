@@ -75,6 +75,21 @@ abstract class WorkerCommand extends Command
         $consumer = $this->getConsumer($input, $output);
 
         // Context
+        $context = $this->getContext($input, $output);
+
+        $manager->consume($queue, $consumer, $context);
+    }
+
+    /**
+     * getContext
+     *
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     *
+     * @return Context
+     */
+    protected function getContext(InputInterface $input, OutputInterface $output)
+    {
         $context = new Context(
             $input->getOption('timeout'),
             $input->getOption('max-messages'),
@@ -84,6 +99,6 @@ abstract class WorkerCommand extends Command
         );
         $context->setOutput($output);
 
-        $manager->consume($queue, $consumer, $context);
+        return $context;
     }
 }
