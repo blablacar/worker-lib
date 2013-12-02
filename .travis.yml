@@ -11,7 +11,6 @@ matrix:
 
 env:
     - LIBRABBITMQ_VERSION=master
-    #- LIBRABBITMQ_VERSION=rabbitmq-c-v0.3.0
 
 services:
     - rabbitmq
@@ -24,7 +23,7 @@ before_script:
   - echo "extension=amqp.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
   - composer self-update
   - composer install
-  - sh -c "./tests/bin/create_mapping"
+  - sh -c "./bin/init_rabbit.sh"
 
 script: phpunit
 
