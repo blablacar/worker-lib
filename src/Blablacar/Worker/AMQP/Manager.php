@@ -9,10 +9,8 @@ use Blablacar\Worker\AMQP\Consumer\Context;
 class Manager
 {
     protected $connection;
-
-    protected $exchanges = array();
-    protected $queues    = array();
     protected $channel;
+
     protected $startTime;
 
     public function __construct(\AMQPConnection $connection)
@@ -40,11 +38,18 @@ class Manager
     /**
      * publish
      *
+     * If the AMQP_MANDATORY flag is not passed, and the publication failed, an
+     * exception is thrown. Otherwise: it just return false
+     *
+     * @see http://us3.php.net/manual/en/amqp.constants.php
+     *
      * @param string $exchange
      * @param string $message
      * @param string $routingKey
      * @param int    $flags
      * @param array  $attributes
+     *
+     * @throw \AMQPChannelException
      *
      * @return boolean
      */
@@ -52,7 +57,20 @@ class Manager
     {
         $exchange = $this->getExchange($exchange);
 
-        return $exchange->publish($message, $routingKey, $flags, $attributes);
+        try {
+            $this->channel->startTransaction();
+            $exchange->publish($message, $routingKey, $flags, $attributes);
+            $this->channel->commitTransaction();
+
+            return true;
+        } catch (\AMQPChannelException $e) {
+            $this->connection->disconnect();
+            if ($flags !== AMQP_MANDATORY || $flags !== AMQP_MANDATORY | AMQP_IMMEDIATE) {
+                return false;
+            }
+
+            throw $e;
+        }
     }
 
     /**
@@ -65,19 +83,19 @@ class Manager
      *
      * @return void
      */
-    public function consume($queue, $consumer, Context $context = null, $flags = null)
+    public function consume($queue, $consumer, Context $context = null, $flags = AMQP_NOPARAM)
     {
         if (null === $context) {
             $context = new Context();
         }
-
-        $queue = $this->getQueue($queue);
 
         if ($consumer instanceof ConsumerInterface) {
             $consumer->preProcess($context);
         }
 
         $this->startTime = time();
+
+        $queue = $this->getQueue($queue);
 
         $continue = true;
         while ($continue) {
@@ -170,18 +188,10 @@ class Manager
      */
     protected function getExchange($name)
     {
-        if (array_key_exists($name, $this->exchanges)) {
-            return $this->exchanges[$name];
-        }
+        $channel = $this->connect();
 
-        if (null === $this->channel) {
-            $this->connect();
-        }
-
-        $exchange = new \AMQPExchange($this->channel);
+        $exchange = new \AMQPExchange($channel);
         $exchange->setName($name);
-
-        $this->exchanges[$name] = $exchange;
 
         return $exchange;
     }
@@ -195,18 +205,10 @@ class Manager
      */
     protected function getQueue($name)
     {
-        if (array_key_exists($name, $this->queues)) {
-            return $this->queues[$name];
-        }
+        $channel = $this->connect();
 
-        if (null === $this->channel) {
-            $this->connect();
-        }
-
-        $queue = new \AMQPQueue($this->channel);
+        $queue = new \AMQPQueue($channel);
         $queue->setName($name);
-
-        $this->queues[$name] = $queue;
 
         return $queue;
     }
@@ -218,9 +220,15 @@ class Manager
      */
     protected function connect()
     {
-        $this->connection->connect();
+        if (!$this->connection->isConnected()) {
+            $this->connection->connect();
+            $this->channel = null;
+        }
 
-        $this->channel = new \AMQPChannel($this->connection);
+        if (null === $this->channel) {
+            $this->channel = new \AMQPChannel($this->connection);
+        }
+
+        return $this->channel;
     }
-
 }

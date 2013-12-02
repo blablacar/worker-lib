@@ -21,3 +21,13 @@ Add the library to your application's `composer.json` file:
     }
 }
 ```
+
+Launch tests
+------------
+
+Once you have a working RabbitMQ running on local and PHPUnit installed, you
+can simply launch
+
+    ./tests.sh
+
+Tests will delete you "/" vhost.

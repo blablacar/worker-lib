@@ -61,7 +61,7 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
     public function testDeleteQueue()
     {
         $manager = new Manager(new \AMQPConnection());
-        $isDeleted = $manager->deleteQueue('blablacar_delete_test');
+        $isDeleted = $manager->deleteQueue('blablacar_worker_delete_queue_test');
 
         $this->assertTrue($isDeleted);
     }
@@ -72,5 +72,28 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
         $isPublished = $manager->publish('blablacar_worker_exchange_test', 'my message', 'test');
 
         $this->assertTrue($isPublished);
+    }
+
+    public function testPublishMessageWithUnknownExchangeThenWithKnownExchangeTheConsumeIt()
+    {
+        $manager = new Manager(new \AMQPConnection());
+        $isPublished = $manager->publish('unknown_exchange', 'my message', 'test');
+        $this->assertFalse($isPublished);
+        $isPublished = $manager->publish('blablacar_worker_empty_exchange_test', 'my message', 'test');
+        $this->assertTrue($isPublished);
+
+        $consumer = $this->getMock('Blablacar\Worker\AMQP\Consumer\ConsumerInterface');
+        $consumer
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with(
+                $this->anything(),
+                $this->anything(),
+                $this->anything()
+            )
+            ->will($this->returnValue(false))
+        ;
+
+        $manager->consume('blablacar_worker_empty_queue_test', new Wrapper($consumer), new Context(4, 1));
     }
 }
