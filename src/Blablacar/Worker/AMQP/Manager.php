@@ -9,6 +9,7 @@ use Blablacar\Worker\AMQP\Consumer\Context;
 class Manager
 {
     protected $connection;
+    protected $channel;
 
     protected $startTime;
 
@@ -37,11 +38,18 @@ class Manager
     /**
      * publish
      *
+     * If the AMQP_MANDATORY flag is not passed, and the publication failed, an
+     * exception is thrown. Otherwise: it just return false
+     *
+     * @see http://us3.php.net/manual/en/amqp.constants.php
+     *
      * @param string $exchange
      * @param string $message
      * @param string $routingKey
      * @param int    $flags
      * @param array  $attributes
+     *
+     * @throw \AMQPChannelException
      *
      * @return boolean
      */
@@ -49,7 +57,20 @@ class Manager
     {
         $exchange = $this->getExchange($exchange);
 
-        return $exchange->publish($message, $routingKey, $flags, $attributes);
+        try {
+            $this->channel->startTransaction();
+            $exchange->publish($message, $routingKey, $flags, $attributes);
+            $this->channel->commitTransaction();
+
+            return true;
+        } catch (\AMQPChannelException $e) {
+            $this->connection->disconnect();
+            if ($flags !== AMQP_MANDATORY || $flags !== AMQP_MANDATORY | AMQP_IMMEDIATE) {
+                return false;
+            }
+
+            throw $e;
+        }
     }
 
     /**
@@ -62,7 +83,7 @@ class Manager
      *
      * @return void
      */
-    public function consume($queue, $consumer, Context $context = null, $flags = null)
+    public function consume($queue, $consumer, Context $context = null, $flags = AMQP_NOPARAM)
     {
         if (null === $context) {
             $context = new Context();
@@ -201,8 +222,13 @@ class Manager
     {
         if (!$this->connection->isConnected()) {
             $this->connection->connect();
+            $this->channel = null;
         }
 
-        return new \AMQPChannel($this->connection);
+        if (null === $this->channel) {
+            $this->channel = new \AMQPChannel($this->connection);
+        }
+
+        return $this->channel;
     }
 }

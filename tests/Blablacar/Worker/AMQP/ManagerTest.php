@@ -78,7 +78,7 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
     {
         $manager = new Manager(new \AMQPConnection());
         $isPublished = $manager->publish('unknown_exchange', 'my message', 'test');
-        $this->assertTrue($isPublished);
+        $this->assertFalse($isPublished);
         $isPublished = $manager->publish('blablacar_worker_empty_exchange_test', 'my message', 'test');
         $this->assertTrue($isPublished);
 
