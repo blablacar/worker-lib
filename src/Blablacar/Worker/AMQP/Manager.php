@@ -57,20 +57,7 @@ class Manager
     {
         $exchange = $this->getExchange($exchange);
 
-        try {
-            $this->channel->startTransaction();
-            $exchange->publish($message, $routingKey, $flags, $attributes);
-            $this->channel->commitTransaction();
-
-            return true;
-        } catch (\AMQPChannelException $e) {
-            $this->connection->disconnect();
-            if ($flags !== AMQP_MANDATORY || $flags !== AMQP_MANDATORY | AMQP_IMMEDIATE) {
-                return false;
-            }
-
-            throw $e;
-        }
+        return $exchange->publish($message, $routingKey, $flags, $attributes);
     }
 
     /**
